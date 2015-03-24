@@ -1,0 +1,100 @@
+Description for final project program for Intro Linguistics.
+by Matthew Corbelli
+
+Description of program:
+
+My program accepts an English sentence, and outputs strings in labled bracket notation for each way it finds to parse the sentence according to X-bar theory. The output is compatible with http://mshang.ca/syntree/.
+
+Some limitations:
+The program ignores capitalization.
+The program does not accept punctuation, conjunctions, or interogatives, or adverbs.
+
+How to use the program:
+To use the program, one needs python 2.7 which can be obtained at https://www.python.org/download/releases/2.7/ .
+With python 2.7 installed, use python to run englistParse_cleaned.py . Depending on the options chosen when installing python, this can be done by just double clicking on engliseParse_cleaned.py .
+
+Then follow the instructions given in the program.
+
+If the program does not find any ways to parse the sentence, or if it does not find the parsing you were looking for, there are a few possible explanations.
+
+1)Some of the words in your sentence might not be in the wordlists the program has. In this case, you should edit the relevant wordlist file so that contains the words you need, and run the program again.
+For example, the nounlist file does not contain any names, so if you wanted to parse a sentence with someone's name in it, you would first have to edit the nounlist file to add a line with the name.
+
+2)Your sentence might have a conjunction or be a question, or use punctuation. The program does not support these.
+
+3)It is possible that your sentence needs too deep of a parse tree. This limit is in place to insure that the program does not enter an infinite loop. The maximum depth the program will look is currently 50. If you suspect that this is why the program is not finding the parsing of the sentence you are looking for, try increasing this limit.
+This limit is set in line 38 of the program, which says "def t(maxDepth=50):"
+To increase this limit from 50 to 70, you can replace this line with
+"def t(maxDepth=70):"
+Similarly, if the program is too slow, and you are using simple sentences, you might want to reduce it to 40 or 30.
+
+
+Explanation of how the program was created:
+
+The first thing I tried was to split up a sentence into words, and then mark each word with a part of speech.
+This did way would not work well because it would not allow for a word to be interpreted as different parts of speech depending on the context.
+Then I wrote down some notes on what components are made from what components.
+
+I started to write some code in order to store tree like data, which I intended to use to store the result of the parsing.
+I also began to write a function that, when called with a list of words, would try to look through the list to see if the list started with a certain type of thing (such as a noun phrase for example).
+However, I realized that this way of approaching it wouldn't work as well as in some other applications, because of the possibility of parsing something in multiple ways, which would not work well with this approach.
+
+The program needed something so that something could be called multiple times to get multiple different ways to parse part of, or the entire sentence.
+
+This led me to consider using "iterrators". I had not written a program that used (not built in) iterators before, so I had to look up a few things about that first.
+(An iterator is an object which has some ammount of information it stores, and can be called or queried<rephrase?> for a value, and which can either give a value back in responce, or indicate that it cannot give any more values).
+
+So I looked up how to use iterators, and after trying a few examples, started to write the core part of the program.
+In the first few versions, the part of the program would not take a list of words, but instead take a list of parts of speech.
+I set up a thing of information describing a few simple cases of what could be made of what. For example, a determiner bar being made up of a determiner and a noun phrase.
+Then I got it so that the program could make an iterator that could recognize that the first part of speech in a list is the one being searched for, and give both that value and the rest of the list of parts of speech.
+Then I made it so that it could look one level deeper, to for example, recognize that given a list of determiner, noun phrase, and then some other stuff, if it is searching for determiner bar, it can get that out of the first two things.
+
+Then I began to make use of other iterators stored inside of the iterator, and multiple ways to make up a type of thing. The original way I did them used a larger, more complicated, and much less aesthetically pleasing structure compared to the final version. This version was also somewhat buggy. It was somewhat messy.
+
+At this point, it seemed to be mostly working when given parts of speech, so I began to modify it to accept lists of words as well, or instead.
+Instead of, as in the earlier attempt, assigning each word a part of speech when splitting the sentence into a list, I realized it would make more sense to, when looking for a certain word type, check if the word can match that word type, instead of determining the word types of each word beforehand. This allows for words to be different word types in different situations.
+At this point, the part of the program could parse limited types of phrases, and give an output that could be used by the rest of the program.
+
+I added more rules from the notes section to the part of the program that stored rules to be looked up, allowing for IPs and full sentences.
+
+Then I wrote a function that takes how the iterator represents the parsing of a sentence or a constituent, and turns it into a peice of text in labled bracket notation. It does this recursively.
+
+At first, the parser had a structure that wasn't particularly pleasing aesthetically for a program, and there was a bug with trying to get verb phrases to work with prepositions, where the program would recurse in situations that it should not, so I decided to rewrite part of it. I ended up with instead of having the program make a bunch of tests to see if it had to set up anything before trying to find the next way to parse the part of the sentence, it would intead assume that things were set up (because most of the time they would be), and if it turned out that something wasn't set up, it would set the things up and then try again. This ended up being a much simpler and more aesthetically pleasing algorithm, and also led to fixing the bug.
+
+How it works is documented in more detail in the comments of the program.
+
+Some older versions of the program are included so that one can see how the program was developed.
+
+
+Sources for things:
+
+nounlist.txt is from:
+http://www.desiquintans.com/articles.php?page=nounlist
+http://www.desiquintans.com/downloads/nounlist.txt
+
+prepositionlist.txt is from:
+http://donnayoung.org/english/grammar/prepositions.htm
+http://donnayoung.org/fi14a/homeschooling-f/prep-bingo/preposition-list-donnayoungorg.txt
+
+list of auxiliary verbs from:
+http://en.wikipedia.org/wiki/Auxiliary_verb#A_list_of_auxiliaries_in_English
+
+adjectiveslist.txt is from:
+http://www.d.umn.edu/~rave0029/research/adjectives1.txt
+
+verblist.txt is from:
+https://passphrasegenerator.googlecode.com/svn-history/r2/trunk/Verbs.txt
+
+adverblist.txt is from:
+http://www.ashley-bovan.co.uk/words/partsofspeech.html
+
+Other information used:
+http://www.towson.edu/ows/aux_verbs.htm
+
+looked up iterator stuff at:
+http://anandology.com/python-practice-book/iterators.html
+
+There were also some other sources that I used, but unfortunately did not note what they were.
+
+
