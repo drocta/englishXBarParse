@@ -1,5 +1,5 @@
 Description for final project program for Intro Linguistics.
-by Matthew Corbelli
+
 
 Description of program:
 
